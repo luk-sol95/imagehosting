@@ -1,0 +1,151 @@
+﻿@using System.Security.Claims
+@model ImageHosting.Models.AlbumView
+
+@{ ViewData["Title"] = Model.name; }
+@if (User.Identity.IsAuthenticated)
+{
+      bool isAdmin = Model.permission_level == 2;
+<p>
+    <h1>This album is called @Model.name.</h1>
+        @if(isAdmin)
+        {
+        <h2>Your are administrator of this album.</h2>
+        } else
+        {
+            <h2>Your access is read-only.</h2>
+        }
+    @if(isAdmin) {
+     <a asp-action="RemoveAlbum" asp-route-albumid="@Model.id" class="btn btn-danger">DELETE ALBUM AND ALL PHOTOS INSIDE</a>
+    }
+</p>
+    if(isAdmin)
+    {
+
+
+<style>
+    #parent {
+        display: flex;
+    }
+
+    #narrow {
+        width: 50%;
+        background: lightblue;
+    }
+
+    #wide {
+        width: 50%;
+        background: lightgreen;
+        }
+</style>
+<div id="parent">
+    <div id="wide">
+        <form method="post" enctype="multipart/form-data" asp-action="UploadFilesToBlobStorage" asp-route-albumid="@Model.id">
+            <div>
+                <div class="col-md-10" style="padding-top:10px; padding-bottom:10px;">
+                    <div>
+                        <label>Upload more photos to your album:</label>
+                        <input type="file" name="files" multiple />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-10" style="padding-top:5px;">
+                        <input type="submit" value="Upload" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="narrow">
+        <form method="post" enctype="multipart/form-data" asp-action="AddPermissions" asp-route-albumid="@Model.id">
+            <div class="form-group">
+                <div class="col-md-10">
+                    <p>Add permissions:</p>
+                    <input type="text" name="email" />
+                    <label for="access">Choose access level to add: </label>
+
+                    @{ List<SelectListItem> listItems = new List<SelectListItem>();
+                        listItems.Add(new SelectListItem
+                        {
+                            Text = "Read Access",
+                            Value = "1",
+                            Selected = true
+                        });
+                        listItems.Add(new SelectListItem
+                        {
+                            Text = "Admin Access",
+                            Value = "2"
+
+                        }); }
+                    @Html.DropDownList("access", listItems, new { @class = "form-control" })
+                </div>
+                <div class="form-group">
+                    <div class="col-md-10">
+                        <input type="submit" value="Add permission" />
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+    }
+
+    <style>
+    #item {
+        display: inline-block;
+        width: 200px;
+        background: white;
+        padding-left:15px;
+        padding-right:15px;
+    }
+    #buttons {
+        width:200px;
+        display: grid;
+    }
+
+</style>
+
+    @if (Model.photoList.Any())
+    {
+
+            @foreach (var item in Model.photoList)
+            {
+                <div id="item">
+                    <img src="@item.blob_address" width="200" length="200">
+                    <div id="buttons">
+                        <a class="btn btn-primary" onclick="javascript: window.location = '@item.blob_address';">Download</a>
+                        @if (isAdmin)
+                        {
+                            <a class="btn btn-danger" asp-action="DeleteImage" asp-route-photoid="@item.id" , asp-route-albumid="@Model.id">Delete</a>
+                        }
+                    </div>
+                </div>
+            }
+    }
+    else
+    {
+                    <h2>Your album is empty</h2>
+        }
+    }
+    else
+    {
+    <error statusCode="403" />
+    }
+    <script>
+        function DisplayFilesToUpload() {
+            var element = document.getElementById("file");
+            var html = "";
+
+            html = "<h3>Image(s) to Upload</h3>"
+            for (var i = 0; i < element.files.length; i++) {
+                html += "<strong>" + (i + 1) + "</strong>. File: ";
+                var file = element.files[i];
+                if ('name' in file) { html += file.name + " ("; }
+                if ('size' in file) { html += "size: " + file.size + " bytes)<br>"; }
+            }
+
+            html += "<div class='fileUpload btn btn-default'><span>Upload</span><input type='submit' class='upload' value='Upload'/></div>"
+            document.getElementById("FilesToUpload").innerHTML = html;
+        }
+    </script>

@@ -1,0 +1,27 @@
+﻿@model ImageHosting.Models.AlbumView;
+    <style>
+        #options {
+            display: flex;
+        }
+        #confirm {
+            width: 10%;
+            background: white;
+            display:block;
+        }
+        #cancel {
+            width:10%;
+            background: white;
+            display:block;
+        }
+    </style>
+        <h5>Do you really want to delete album @Model.name and all of its contents?</h5>
+        <div id="options">
+            <div id="cancel">
+                <a class="btn btn-success" asp-action="DontDelete" asp-route-albumid="@Model.id">Cancel</a>
+            </div>
+            <div id="confirm">
+                <a class="btn btn-danger" asp-action="ConfirmDelete" asp-route-albumid="@Model.id">Delete</a>
+            </div>
+        </div>
+
+

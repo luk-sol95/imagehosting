@@ -1,0 +1,45 @@
+﻿@model ImageHosting.Models.IndexModel
+
+@{ ViewData["Title"] = "Home Page"; }
+@if (User.Identity.IsAuthenticated)
+{
+<h1>Welcome @User.Identity.Name. </h1>
+<h3>You can create new album, or see/modify contents of your albums, or those shared with you.</h3>
+       
+            <a class="btn btn-primary" asp-action="CreateAlbum">Create new album</a>
+            @if (Model.personalAlbums.Any())
+            {
+                <h3>Your personal albums:</h3>
+                <div class="table-hover table-condensed table-striped">
+                    @foreach (var item in Model.personalAlbums)
+                    {
+              
+                    <a class="btn btn-primary" asp-route-albumItemId="@item.id" asp-action="AlbumView">@item.name</a>
+                
+                  
+                    }
+                </div>
+
+
+            }
+            @if (Model.externalAlbums.Any())
+            {
+                <h3>Albums shared with you:</h3>
+                <div class="table-hover table-condensed table-striped">
+                    @foreach (var item in Model.externalAlbums)
+                    {
+                    <a class="btn btn-primary" asp-route-albumItemId="@item.id" asp-action="AlbumView">@item.name</a>
+                    }
+                </div>
+
+
+            }
+}
+                        else
+                        {
+            <h1>
+                Welcome to Sołtysiński Image Hosting service!
+            </h1>
+                            <p>
+                                Please login or create an account to see your albums.
+                            </p>}

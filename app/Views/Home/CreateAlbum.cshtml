@@ -1,0 +1,21 @@
+﻿@{ ViewData["Title"] = "Create album"; }
+
+    <form method="post" enctype="multipart/form-data" asp-action="CreateAlbum">
+        <div class="form-group" style="padding-top:50px">
+            <div class="align-items-sm-center">
+                <label>Album name:</label>
+                <input type="text" name="albumname" />
+
+            </div>
+            <div style="padding-top:20px">
+                <label for="access">Add photos: </label>
+                <input type="file" name="files" multiple />
+            </div>
+            <div class="form-group">
+                <div class="col-md-10" style="padding-top:10px">
+                    <input type="submit" value="Create" />
+                </div>
+            </div>
+        </div>
+    </form>
+
